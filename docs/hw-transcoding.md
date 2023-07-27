@@ -66,10 +66,18 @@ sudo apt-get install -y intel-media-va-driver-non-free ffmpeg
 
 Alpine:
 
-```bash
+```ash
 apk update
-apk add --no-cache bash ffmpeg libva-utils libva-vdpau-driver libva-intel-driver intel-media-driver mesa-va-gallium
+apk add --no-cache bash ffmpeg libva libva-glx mesa-gl libva-vdpau-driver libva-intel-driver intel-media-driver mesa-va-gallium
 ```
+
+`libva-utils` contains `vainfo` which is useful for finding out information about the capabilities of the Intel GPU, however, is not needed for the functioning of the app. It is only available in the testing repository on Alpine Edge at the moment. In order to add it you would need to add the appropriate repository:
+```ash
+echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+apk update
+apk add --no-cache libva-utils@testing
+```
+Note that mixing packages from Stable and Testing might cause instability to a system.
 
 ### Docker installations
 
@@ -122,7 +130,7 @@ devices:
   - /dev/dri:/dev/dri
 environment:
   - DOCKER_MODS=linuxserver/mods:universal-package-install
-  - INSTALL_PACKAGES=libva|libva-intel-driver|intel-media-driver|mesa-va-gallium
+  - INSTALL_PACKAGES=libva|libva-glx|libva-intel-driver|intel-media-driver|mesa-glx|mesa-va-gallium
 ```
 
 ### FFmpeg from source
